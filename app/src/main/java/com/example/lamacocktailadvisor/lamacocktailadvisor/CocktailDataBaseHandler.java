@@ -1,0 +1,305 @@
+package com.example.lamacocktailadvisor.lamacocktailadvisor;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+/**
+ * Created by Emilie on 15/05/2015.
+ */
+public class CocktailDataBaseHandler extends SQLiteOpenHelper{
+    private static CocktailDataBaseHandler cocktailDBInstance = null;
+
+    public static synchronized CocktailDataBaseHandler getInstance(Context context){
+
+        if (cocktailDBInstance == null) {
+            cocktailDBInstance = new CocktailDataBaseHandler(context.getApplicationContext());
+        }
+        return cocktailDBInstance;
+    }
+
+
+    private static final String TAG = "CocktailDataBaseHandler";
+
+    private static final int COCKTAIL_DATABASE_VERSION = 1;
+
+    //VERSION 1
+    private static final String DATABASE_COCKTAIL_NAME = "cocktailDB.sqlite";
+    public static final String TABLE_COCKTAILS = "cocktails";
+
+    public static final String COLUMN_ID = "_id";
+    public static final String COLUMN_COCKTAILNAME = "cocktailname";
+    public static final String COLUMN_AVERAGEGRADE= "averagegrade";
+    public static final String COLUMN_GRADESAMOUNT= "gradesamount";
+
+
+    public CocktailDataBaseHandler(Context context) {
+        super(context, DATABASE_COCKTAIL_NAME, null, COCKTAIL_DATABASE_VERSION);
+        Log.v(TAG, "Database constructor");
+    }
+
+
+    @Override
+    public void onCreate(SQLiteDatabase db){
+        String CREATE_COCKTAILS_TABLE = "CREATE TABLE " +
+                TABLE_COCKTAILS + "("
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_COCKTAILNAME + " TEXT,"
+                + COLUMN_AVERAGEGRADE + " REAL,"
+                + COLUMN_GRADESAMOUNT + " INTEGER"+ ")";
+        db.execSQL(CREATE_COCKTAILS_TABLE);
+        Log.v(TAG, "Database cocktail created");
+
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+        // TODO in better version : compare tables, not drop all table
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COCKTAILS);
+        onCreate(db);
+
+        Log.v(TAG, "onUpgrade: cocktail Database has been upgraded");
+    }
+
+    public int addCocktailInDB (String name){
+		/*SQLiteDatabase db = getWritableDatabase();
+
+		if(db.isReadOnly()){
+			Log.v(TAG, "bd in ReadOnly");
+			return;
+		}*/
+        int id;
+        SQLiteDatabase db ;
+        if (!isCocktailInDB(name)){
+            ContentValues values = new ContentValues();
+            values.put (COLUMN_COCKTAILNAME, name);
+            values.put (COLUMN_AVERAGEGRADE, 0.0f);
+            values.put (COLUMN_GRADESAMOUNT, 0);
+
+            try{
+                db = getWritableDatabase();
+                id = (int)db.insertOrThrow(TABLE_COCKTAILS, null, values);
+                db.close();
+            }
+            catch(SQLException e){
+                Log.w(TAG, e);
+                return -1;
+            }
+
+            Log.v(TAG, "Database cocktail added");
+        }
+        else{
+            Log.v(TAG, "cocktail already in db");
+            id = getCocktailId(name);
+        }
+        return id;
+    }
+
+    public int addCocktailInDB (Cocktail cocktail)
+    {
+        SQLiteDatabase db = getWritableDatabase();
+        int id;
+
+        String name= cocktail.getName();
+
+        if (!isCocktailInDB(name)){
+            ContentValues values = new ContentValues();
+            values.put (COLUMN_COCKTAILNAME, name);
+            values.put (COLUMN_AVERAGEGRADE, cocktail.getAverageGrade());
+            values.put (COLUMN_GRADESAMOUNT, cocktail.getGradesAmount());
+
+            try{
+                db = getWritableDatabase();
+                id = (int)db.insertOrThrow(TABLE_COCKTAILS, null, values);
+                db.close();
+            }
+            catch(SQLException e){
+                Log.w(TAG, e);
+                return -1;
+            }
+
+            Log.v(TAG, "Database cocktail added");
+        }
+        else{
+            Log.v(TAG, "cocktail already in db");
+            id = getCocktailId(name);
+        }
+
+        return id;
+    }
+
+    public Cocktail findCocktailFromName(String cocktailName)
+    {
+        String query = "Select * FROM " + TABLE_COCKTAILS + " WHERE " + COLUMN_COCKTAILNAME + " = \"" + cocktailName +  "\"";
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cocktail cocktail = new Cocktail();
+
+        Cursor cursor = db.rawQuery(query, null);
+        int count = cursor.getCount();
+
+        if (count == 1){
+            if (cursor.moveToFirst())
+            {
+                //cursor.moveToFirst();
+                cocktail.setId(Integer.parseInt(cursor.getString(0)));
+                cocktail.setName(cursor.getString(1));
+                cocktail.setAverageGrade(Float.parseFloat(cursor.getString(2)));
+                cocktail.setGradesAmount(Integer.parseInt(cursor.getString(3)));
+
+                Log.v(TAG, "Database cocktail found");
+            }
+            else
+            {
+                Log.v(TAG, "Database no cocktail found");
+            }
+
+            cursor.close();
+            db.close();
+            return cocktail;
+        }
+        else{
+            if (count > 1){
+                Log.e(TAG, "ERROR : Multiple cocktails found");
+            }
+
+            if ( count == 0 ){
+                Log.e(TAG, "ERROR : NO cocktail found");
+            }
+        }
+        //TODO if count > 1 ou count =0 on renvoit un cocktail empty...
+        return cocktail;
+    }
+
+    public int getCocktailId(String name){
+        int cocktailId = -1;
+        Cocktail cocktail = findCocktailFromName(name);
+        cocktailId = cocktail.getId();
+        return cocktailId;
+    }
+
+    public boolean isCocktailInDB(String cocktailName)
+    {
+        boolean result = false;
+        String query = "Select * FROM " + TABLE_COCKTAILS + " WHERE " + COLUMN_COCKTAILNAME + " = \"" + cocktailName +  "\"";
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(query, null);
+        int numberFoundCocktails = cursor.getCount();
+
+        if (numberFoundCocktails > 0)
+        {
+            result = true;
+
+            Log.v(TAG, "com.example.lamacocktailadvisor.lamacocktailadvisor.Cocktail already in DB");
+        }
+        else
+        {
+
+            Log.v(TAG, "com.example.lamacocktailadvisor.lamacocktailadvisor.Cocktail not found in DB");
+        }
+
+        db.close();
+        return result;
+    }
+
+    public boolean deleteCocktail(String cocktailName)
+    {
+        String query = "Select * FROM " + TABLE_COCKTAILS + "WHERE " + COLUMN_COCKTAILNAME + " = \"" + cocktailName +  "\"";
+        SQLiteDatabase db = getWritableDatabase();
+
+        boolean found = false;
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        Cocktail cocktail = new Cocktail();
+        if (cursor.moveToFirst())
+        {
+            cursor.moveToFirst();
+            cocktail.setId(Integer.parseInt(cursor.getString(0)));
+
+            db.delete(TABLE_COCKTAILS, COLUMN_ID + " = ?",
+                    new String[] { String.valueOf(cocktail.getId()) });
+
+            cursor.close();
+            found = true;
+            Log.v(TAG, "Database cocktail found");
+        }
+        else
+        {
+            cocktail = null;
+
+            Log.v(TAG, "Database no cocktail found");
+        }
+        db.close();
+        return found;
+    }
+
+    public void deleteAllCocktailsInDB()
+    {
+        String query = "Select * FROM " + TABLE_COCKTAILS ;
+        SQLiteDatabase db = getWritableDatabase();
+
+        int count = 0;
+        Cursor cursor = db.rawQuery(query, null);
+        cursor.moveToFirst();
+
+        for (int i = 0; i < cursor.getCount(); i++)
+        {
+            count++;
+            db.delete(TABLE_COCKTAILS, COLUMN_ID + " = ?",
+                    new String[] { String.valueOf(cursor.getString(0)) });
+            cursor.moveToNext();
+        }
+        cursor.close();
+        db.close();
+
+        Log.v(TAG, "deleteAllCocktailsInDB: " + count + " cocktails deleted from database");
+    }
+
+    public void addCocktailRating(String cocktail, float rating){
+
+        //TODO 	addCocktailRating
+    }
+
+    public void printCocktailsDB(){
+        String query = "Select * FROM " + TABLE_COCKTAILS;
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        int totalCocktail = cursor.getCount();
+        Log.v(TAG, "printCocktailsDB:  " + totalCocktail + " cocktails in the database");
+        if (totalCocktail < 1){
+            Log.v(TAG, "printCocktailsDB: No cocktail to print");
+        }
+        else{
+            try{
+                cursor.moveToFirst();
+                for (int i = 0; i < totalCocktail; i++) {
+
+                    Cocktail cocktail = new Cocktail();
+
+                    cocktail.setId(Integer.parseInt(cursor.getString(0)));
+                    cocktail.setName(cursor.getString(1));
+                    cocktail.setAverageGrade(Float.parseFloat(cursor.getString(2)));
+                    cocktail.setGradesAmount(Integer.parseInt(cursor.getString(3)));
+
+                    cocktail.printCocktailInfo();
+                    cursor.moveToNext();
+
+                }
+            }
+            catch(Exception e){
+                Log.w(TAG, e);
+            }
+        }
+
+        cursor.close();
+        db.close();
+    }
+}

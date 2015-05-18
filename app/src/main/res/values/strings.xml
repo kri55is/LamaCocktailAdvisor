@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">LamaCocktailAdvisor</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="editText">Add cocktail here</string>
+    <string name="editTextLama">Add lama here</string>
+
+    <string name="saveButton">Save</string>
+    <string name="deleteAllDBButton">Delete all cocktails</string>
+    <string name="AddCocktailButton">Add Cocktail</string>
+    <string name="AddedCocktailFeedback">You added </string>
+
+
+    <string name="enter">Enter</string>
+
+    <string name="ToastCocktailAdded"> added. </string>
+    <string name="title_activity_splash_screen">SplashScreenActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+</resources>
