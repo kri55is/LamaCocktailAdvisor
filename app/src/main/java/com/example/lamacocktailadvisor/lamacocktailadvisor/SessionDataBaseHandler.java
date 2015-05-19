@@ -65,7 +65,7 @@ public class SessionDataBaseHandler extends SQLiteOpenHelper{
     }
 
 
-    public void addEntryInSesson (int sessonNum, int cocktailId, int lamaId, float rating ){
+    public void addEntryInSession (int sessionNum, int cocktailId, int lamaId, float rating ){
         SQLiteDatabase db = getWritableDatabase();
 
         if(db.isReadOnly()){
@@ -74,7 +74,7 @@ public class SessionDataBaseHandler extends SQLiteOpenHelper{
         }
 
         ContentValues values = new ContentValues();
-        values.put (COLUMN_SESSIONNUMBER, sessonNum);
+        values.put (COLUMN_SESSIONNUMBER, sessionNum);
         values.put (COLUMN_COCKTAILID, cocktailId);
         values.put (COLUMN_LAMAID, lamaId);
         values.put (COLUMN_GRADE, rating);

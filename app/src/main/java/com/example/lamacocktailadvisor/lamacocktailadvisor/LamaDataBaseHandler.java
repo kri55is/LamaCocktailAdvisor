@@ -64,36 +64,37 @@ public class LamaDataBaseHandler extends SQLiteOpenHelper{
 
 
 
-    public void addLamaInDB (String name){
-        SQLiteDatabase db = getWritableDatabase();
-
-        if(db.isReadOnly()){
-            Log.v(TAG, "bd in ReadOnly");
-            return;
-        }
+    public int addLamaInDB (String name){
+        int id;
+        SQLiteDatabase db;
         if (!isLamaInDB(name)){
             ContentValues values = new ContentValues();
             values.put (COLUMN_LAMANAME, name);
 
             try{
-                db.insertOrThrow(TABLE_LAMAS, null, values);
+                db = getWritableDatabase();
+                id = (int)db.insertOrThrow(TABLE_LAMAS, null, values);
+                db.close();
             }
             catch(SQLException e){
                 Log.w(TAG, e);
+                return -1;
             }
 
             Log.v(TAG, "Database lama added");
         }
         else{
             Log.v(TAG, "lama already in db");
+            id = getLamaId(name);
         }
-        db.close();
+        return id;
     }
 
     public boolean isLamaInDB(String lamaName)
     {
         boolean result = false;
         String query = "Select * FROM " + TABLE_LAMAS + " WHERE " + COLUMN_LAMANAME + " = \"" + lamaName +  "\"";
+        try{
         SQLiteDatabase db = getReadableDatabase();
 
         Cursor cursor = db.rawQuery(query, null);
@@ -112,6 +113,10 @@ public class LamaDataBaseHandler extends SQLiteOpenHelper{
         }
 
         db.close();
+        }
+        catch(SQLException e){
+            Log.w(TAG, e);
+        }
         return result;
     }
 

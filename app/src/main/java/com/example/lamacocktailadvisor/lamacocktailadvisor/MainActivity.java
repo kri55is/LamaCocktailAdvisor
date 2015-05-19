@@ -28,6 +28,8 @@ public class MainActivity
     RatingBar mRatingBarCocktail = null;
     Button mBtnEnter = null;
 
+    String mCocktail = null;
+    String mLama = null;
 
     CocktailDataBaseHandler mDBCocktail = null;
     LamaDataBaseHandler mDBLama = null;
@@ -50,7 +52,8 @@ public class MainActivity
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mEtxtMyInputCocktail.setText(s.toString());
+                mCocktail = s.toString();
+               // mEtxtMyInputCocktail.setText(s.toString());
             }
 
             @Override
@@ -69,7 +72,7 @@ public class MainActivity
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mEtxtMyInputLama.setText(s.toString());
+                mLama = s.toString();
             }
 
             @Override
@@ -90,21 +93,21 @@ public class MainActivity
         //DataBase
 
         mDBCocktail = CocktailDataBaseHandler.getInstance(this);
-        mDBLama = new LamaDataBaseHandler(this);
-        mDBSession = new SessionDataBaseHandler(this);
+        mDBLama = LamaDataBaseHandler.getInstance(this);
+        mDBSession = SessionDataBaseHandler.getInstance(this);
 
         setContentView(mLayout);
         Log.v(TAG, " set content done. ");
     }
 
     public void EnterInputs(View view){
-       /*String myCocktail = mEtxtMyInputCocktail.getText().toString();
-		String myLama = mEtxtMyInputLama.getText().toString();
-		Float myRating = mRatingBarCocktail.getRating();*/
-        String myCocktail = "mojito";
-        String myLama = "Youyou";
-        Float myRating = 3.0f;
 
+        String myCocktail = mCocktail;
+        String myLama = mLama;
+        Float myRating = mRatingBarCocktail.getRating();
+
+        //clear input
+        resetInput();
 
         //if an info is missing,error message
         if(myCocktail.isEmpty() || myLama.isEmpty()){
@@ -127,9 +130,11 @@ public class MainActivity
             //add cocktail entry in cocktail table is new entry
             int cocktailId = mDBCocktail.addCocktailInDB(myCocktail);
             mDBCocktail.printCocktailsDB();
+            Toast.makeText(this, "Cocktail " + myCocktail + " added.", Toast.LENGTH_LONG).show();
 
             //add lama entry in lama table if new lama
-            //mDBLama.addLamaInDB(myLama);
+/*            mDBLama.addLamaInDB(myLama);
+            mDBLama.printLamasDB();*/
 
             //add entry in sesson with cocktail, lama and grade + check if lama's favorite cocktail changed
             //mDBSession.addEntryInSesson(1 /*sesson num*/, myCocktailId, myLamaId, myRating);
@@ -140,4 +145,9 @@ public class MainActivity
         }
     }
 
+    private void resetInput(){
+        mEtxtMyInputCocktail.setText("");
+        mEtxtMyInputLama.setText("");
+        mRatingBarCocktail.setRating(2.5f);
+    }
 }
