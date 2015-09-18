@@ -22,7 +22,7 @@ public class LamaDataBaseHandler extends SQLiteOpenHelper{
         return lamaDBInstance;
     }
 
-    private static final String TAG = "LamaDataBaseHandler";
+    private static final String TAG = "Lama";
 
 
     //VERSION 1
@@ -43,7 +43,7 @@ public class LamaDataBaseHandler extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db){
 
-        String CREATE_LAMA_TABLE = "CREATE TABLE" +
+        String CREATE_LAMA_TABLE = "CREATE TABLE " +
                 TABLE_LAMAS + "("
                 + COLUMN_ID + " INTEGER PRIMARY KEY,"
                 + COLUMN_LAMANAME + " TEXT,"
@@ -70,6 +70,7 @@ public class LamaDataBaseHandler extends SQLiteOpenHelper{
         if (!isLamaInDB(name)){
             ContentValues values = new ContentValues();
             values.put (COLUMN_LAMANAME, name);
+            values.put (COLUMN_FAVORITECOCKTAIL, -1);
 
             try{
                 db = getWritableDatabase();
@@ -211,45 +212,47 @@ public class LamaDataBaseHandler extends SQLiteOpenHelper{
 
     public Lama findLamaFromName(String lamaName)
     {
-        String query = "Select * FROM " + TABLE_LAMAS + "WHERE " + COLUMN_LAMANAME + " = \"" + lamaName +  "\"";
-        SQLiteDatabase db = getReadableDatabase();
+        try {
+            String query = "Select * FROM " + TABLE_LAMAS + " WHERE " + COLUMN_LAMANAME + " = \"" + lamaName + "\"";
+            SQLiteDatabase db = getReadableDatabase();
 
-        Lama lama= new Lama();
+            Lama lama = new Lama();
 
-        Cursor cursor = db.rawQuery(query, null);
-        int count = cursor.getCount();
+            Cursor cursor = db.rawQuery(query, null);
+            int count = cursor.getCount();
 
-        if (count == 1){
-            if (cursor.moveToFirst())
-            {
-                //cursor.moveToFirst();
-                lama.setId(Integer.parseInt(cursor.getString(0)));
-                lama.setName(cursor.getString(1));
-                lama.setFavoriteCocktail(Integer.parseInt(cursor.getString(2)));
+            if (count == 1) {
+                if (cursor.moveToFirst()) {
+                    //cursor.moveToFirst();
+                    lama.setId(Integer.parseInt(cursor.getString(0)));
+                    lama.setName(cursor.getString(1));
+                    lama.setFavoriteCocktail(Integer.parseInt(cursor.getString(2)));
 
-                cursor.close();
+                    cursor.close();
 
-                Log.v(TAG, "Database lama found");
+                    Log.v(TAG, "Database lama found");
+                } else {
+                    Log.v(TAG, "Database no lama found");
+                }
+
+                db.close();
+                return lama;
+            } else {
+                if (count > 1) {
+                    Log.e(TAG, "ERROR : Multiple lamas found");
+                }
+
+                if (count == 0) {
+                    Log.e(TAG, "ERROR : NO lama found");
+                }
             }
-            else
-            {
-                Log.v(TAG, "Database no lama found");
-            }
-
-            db.close();
             return lama;
         }
-        else{
-            if (count > 1){
-                Log.e(TAG, "ERROR : Multiple lamas found");
-            }
-
-            if ( count == 0 ){
-                Log.e(TAG, "ERROR : NO lama found");
-            }
+        catch (Throwable t){
+            Log.e(TAG, "Error in LamaDataBaseHandler:findLamaFromName. ", t);
+            return null;
         }
         //TODO if count > 1 ou count =0 on renvoit un lama empty...
-        return lama;
     }
 
     public int getLamaId(String name){

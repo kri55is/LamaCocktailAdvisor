@@ -6,7 +6,7 @@
     <string name="editTextLama">Add lama here</string>
 
     <string name="saveButton">Save</string>
-    <string name="deleteAllDBButton">Delete all cocktails</string>
+    <string name="deleteAllDBButton">Delete all</string>
     <string name="AddCocktailButton">Add Cocktail</string>
     <string name="AddedCocktailFeedback">You added </string>
 
@@ -15,6 +15,9 @@
 
     <string name="ToastCocktailAdded"> added. </string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
+
+    <string name="action_addCocktails">Add</string>
+    <string name="action_viewCocktails">View</string>
 
     <string name="hello_world">Hello world!</string>
 </resources>

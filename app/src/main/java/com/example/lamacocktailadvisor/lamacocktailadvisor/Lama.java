@@ -9,9 +9,13 @@ public class Lama {
     public String mName;
     public int mFavoriteCocktail;
 
-    private static final String TAG = "LamaClass";
+    private static final String TAG = "Lama";
 
-    public Lama(){}
+    public Lama(){
+        this.mId = -1;
+        this.mName= "";
+        this.mFavoriteCocktail = -1;
+    }
 
     public Lama(int id, String name, int favoriteCocktail){
         this.mId = id;
@@ -22,7 +26,9 @@ public class Lama {
     public Lama(int id, String name){
         this.mId = id;
         this.mName= name;
+        this.mFavoriteCocktail = -1;
     }
+
 
     public int getId() {
         return mId;

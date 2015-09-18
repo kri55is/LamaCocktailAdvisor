@@ -13,7 +13,7 @@ public class Cocktail {
     //mListIngredients
 
 
-    private static final String TAG = "CocktailClass";
+    private static final String TAG = "Cocktail";
 
     public Cocktail(int id, String name, float averageGrade, int gradeAmount){
 
@@ -121,7 +121,7 @@ public class Cocktail {
 
     public void printCocktailInfo(){
 
-        Log.v(TAG, "cocktail" + mId + " " + mName + " "
+        Log.v(TAG, "cocktail " + mId + " " + mName + " "
                 + mAverageGrade + " " + mGradeAmount);
     }
 }

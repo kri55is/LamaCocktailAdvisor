@@ -20,7 +20,7 @@ public class SessionDataBaseHandler extends SQLiteOpenHelper{
         return sessionDBInstance;
     }
 
-    private static final String TAG = "SessionDataBaseHandler";
+    private static final String TAG = "Session";
 
     //VERSION 1
     private static final String DATABASE_SESSION_NAME = "sessionDB.sqlite";
@@ -42,7 +42,7 @@ public class SessionDataBaseHandler extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db){
 
-        String CREATE_SESSION_TABLE = "CREATE TABLE" +
+        String CREATE_SESSION_TABLE = "CREATE TABLE " +
                 TABLE_SESSIONS + "("
                 + COLUMN_ID + " INTEGER PRIMARY KEY,"
                 + COLUMN_SESSIONNUMBER + " INTEGER,"
@@ -66,31 +66,29 @@ public class SessionDataBaseHandler extends SQLiteOpenHelper{
 
 
     public void addEntryInSession (int sessionNum, int cocktailId, int lamaId, float rating ){
-        SQLiteDatabase db = getWritableDatabase();
 
-        if(db.isReadOnly()){
-            Log.v(TAG, "bd in ReadOnly");
-            return;
+        try {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_SESSIONNUMBER, sessionNum);
+            values.put(COLUMN_COCKTAILID, cocktailId);
+            values.put(COLUMN_LAMAID, lamaId);
+            values.put(COLUMN_GRADE, rating);
+
+            try {
+                SQLiteDatabase db = getWritableDatabase();
+                db.insertOrThrow(TABLE_SESSIONS, null, values);
+                db.close();
+            } catch (SQLException e) {
+                Log.e(TAG,"SQL Error in addEntryInSession", e);
+            }
+
+            Log.v(TAG, "Database entry added");
+
+            //TODO check if lama's favorite cocktail changed
         }
-
-        ContentValues values = new ContentValues();
-        values.put (COLUMN_SESSIONNUMBER, sessionNum);
-        values.put (COLUMN_COCKTAILID, cocktailId);
-        values.put (COLUMN_LAMAID, lamaId);
-        values.put (COLUMN_GRADE, rating);
-
-        try{
-            db.insertOrThrow(TABLE_SESSIONS, null, values);
+        catch(Throwable t){
+            Log.e(TAG, "Error in addEntryInSession. ", t);
         }
-        catch(SQLException e){
-            Log.w(TAG, e);
-        }
-
-        Log.v(TAG, "Database session added");
-
-        //TODO add rating to cocktail + increment ratingAmount
-        //TODO check if lama's favorite cocktail changed
-        db.close();
     }
 
 
@@ -134,7 +132,7 @@ public class SessionDataBaseHandler extends SQLiteOpenHelper{
                     Session session= new Session();
 
                     session.setId(Integer.parseInt(cursor.getString(1)));
-                    session.setSessonNumber(Integer.parseInt(cursor.getString(1)));
+                    session.setSessionNumber(Integer.parseInt(cursor.getString(1)));
                     session.setCocktail(Integer.parseInt(cursor.getString(2)));
                     session.setLama(Integer.parseInt(cursor.getString(3)));
                     session.setGrade(Integer.parseInt(cursor.getString(4)));

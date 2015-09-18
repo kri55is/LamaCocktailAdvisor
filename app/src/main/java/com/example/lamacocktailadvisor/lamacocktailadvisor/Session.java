@@ -7,25 +7,25 @@ import android.util.Log;
 public class Session {
 
     public int mId;
-    public int mSessonNumber;
+    public int mSessionNumber;
     public int mCocktail;
     public int mLama;
     public float mGrade;
 
-    private static final String TAG = "SessonsClass";
+    private static final String TAG = "Session";
 
     public Session(){}
-    public Session(int id, int sessonNumber,  int cocktail, int lama, int grade){
+    public Session(int id, int sessionNumber,  int cocktail, int lama, int grade){
         this.mId = id;
-        this.mSessonNumber = sessonNumber;
+        this.mSessionNumber = sessionNumber;
         this.mCocktail = cocktail;
         this.mLama = lama;
         this.mGrade = grade;
     }
 
-    public Session(int id, int sessonNumber){
+    public Session(int id, int sessionNumber){
         this.mId = id;
-        this.mSessonNumber = sessonNumber;
+        this.mSessionNumber = sessionNumber;
     }
 
     public int getId() {
@@ -36,12 +36,12 @@ public class Session {
         this.mId = mId;
     }
 
-    public int getSessonNumber() {
-        return mSessonNumber;
+    public int getSessionNumber() {
+        return mSessionNumber;
     }
 
-    public void setSessonNumber(int mSessonNumber) {
-        this.mSessonNumber = mSessonNumber;
+    public void setSessionNumber(int mSessionNumber) {
+        this.mSessionNumber = mSessionNumber;
     }
 
     public int getCocktail() {
@@ -69,7 +69,7 @@ public class Session {
     }
 
     public void printSessionInfo(){
-        Log.v(TAG, "session " + mId + " " + mSessonNumber + " "
+        Log.v(TAG, "session " + mId + " " + mSessionNumber + " "
                 + mCocktail + " " + mLama + " " + mGrade);
     }
 

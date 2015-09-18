@@ -23,7 +23,7 @@ public class CocktailDataBaseHandler extends SQLiteOpenHelper{
     }
 
 
-    private static final String TAG = "CocktailDataBaseHandler";
+    private static final String TAG = "Cocktail";
 
     private static final int COCKTAIL_DATABASE_VERSION = 1;
 
@@ -242,7 +242,9 @@ public class CocktailDataBaseHandler extends SQLiteOpenHelper{
 
     public void deleteAllCocktailsInDB()
     {
-        String query = "Select * FROM " + TABLE_COCKTAILS ;
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_COCKTAILS, null, null);
+        /*String query = "Select * FROM " + TABLE_COCKTAILS ;
         SQLiteDatabase db = getWritableDatabase();
 
         int count = 0;
@@ -259,12 +261,62 @@ public class CocktailDataBaseHandler extends SQLiteOpenHelper{
         cursor.close();
         db.close();
 
-        Log.v(TAG, "deleteAllCocktailsInDB: " + count + " cocktails deleted from database");
+        Log.v(TAG, "deleteAllCocktailsInDB: " + count + " cocktails deleted from database");*/
     }
 
-    public void addCocktailRating(String cocktail, float rating){
+    public float addCocktailRating(String cocktailName, float rating){
+        float average = -1;
+        int gradesAmount = 0;
 
-        //TODO 	addCocktailRating
+        Log.v(TAG, "Add rating" + rating + " to " + cocktailName);
+        String query = "Select * FROM " + TABLE_COCKTAILS + " WHERE " + COLUMN_COCKTAILNAME + " = \"" + cocktailName +  "\"";
+        SQLiteDatabase db = getWritableDatabase();
+
+        Cursor cursor = db.rawQuery(query, null);
+        int count = cursor.getCount();
+
+        if (count == 1){
+            if (cursor.moveToFirst())
+            {
+                String name = cursor.getString(1);
+                average = Float.parseFloat(cursor.getString(2));
+                Log.v(TAG, "old average was : " + average);
+                gradesAmount = Integer.parseInt(cursor.getString(3));
+
+                average = (average * gradesAmount + rating)/(gradesAmount + 1 );
+                gradesAmount++;
+
+                ContentValues values = new ContentValues();
+                values.put (COLUMN_AVERAGEGRADE, average);
+                values.put(COLUMN_GRADESAMOUNT, gradesAmount);
+
+                try{
+                    int nb_rows = db.update(TABLE_COCKTAILS, values, COLUMN_COCKTAILNAME + " = \"" + cocktailName + "\"", null);
+                    Log.v(TAG, "Grade added");
+                }
+                catch(SQLException e){
+                    Log.w(TAG, e);
+                }
+
+            }
+            else
+            {
+                Log.v(TAG, "Database no cocktail found");
+            }
+
+            cursor.close();
+            db.close();
+        }
+        else{
+            if (count > 1){
+                Log.e(TAG, "ERROR : Multiple cocktails found");
+            }
+
+            if ( count == 0 ){
+                Log.e(TAG, "ERROR : NO cocktail found");
+            }
+        }
+        return average;
     }
 
     public void printCocktailsDB(){
