@@ -19,5 +19,5 @@
     <string name="action_addCocktails">Add</string>
     <string name="action_viewCocktails">View</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_single_fragment">SingleFragmentActivity</string>
 </resources>

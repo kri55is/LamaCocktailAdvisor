@@ -66,6 +66,18 @@ public class CocktailDataBaseHandler extends SQLiteOpenHelper{
         Log.v(TAG, "onUpgrade: cocktail Database has been upgraded");
     }
 
+    public int getCocktailCount(){
+
+        String query = "Select * FROM " + TABLE_COCKTAILS;
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(query, null);
+        int count = cursor.getCount();
+
+        return count;
+
+    }
+
     public int addCocktailInDB (String name){
 		/*SQLiteDatabase db = getWritableDatabase();
 
@@ -131,6 +143,45 @@ public class CocktailDataBaseHandler extends SQLiteOpenHelper{
         }
 
         return id;
+    }
+
+    public Cocktail findCocktailFromId(int id) {
+        //WARNING id in database starts at 1, not 0!!!
+        int dataBaseId = id+1;
+        String query = "Select * FROM " + TABLE_COCKTAILS + " WHERE " + COLUMN_ID + " = " + dataBaseId ;
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        int totalCocktail = cursor.getCount();
+        if (totalCocktail == 1) {
+            Log.v(TAG, "printCocktailsDB: No cocktail to find");
+            try {
+                cursor.moveToFirst();
+
+                Cocktail cocktail = new Cocktail();
+
+                cocktail.setId(Integer.parseInt(cursor.getString(0)));
+                cocktail.setName(cursor.getString(1));
+                cocktail.setAverageGrade(Float.parseFloat(cursor.getString(2)));
+                cocktail.setGradesAmount(Integer.parseInt(cursor.getString(3)));
+
+                cursor.close();
+                db.close();
+                return cocktail;
+            }
+            catch (Exception e) {
+                Log.w(TAG, e);
+                cursor.close();
+                db.close();
+                return null;
+            }
+        } else {
+            Log.v(TAG, "ERROR: several cocktails found with this id.");
+
+            cursor.close();
+            db.close();
+            return null;
+        }
     }
 
     public Cocktail findCocktailFromName(String cocktailName)
@@ -204,6 +255,7 @@ public class CocktailDataBaseHandler extends SQLiteOpenHelper{
             Log.v(TAG, "com.example.lamacocktailadvisor.lamacocktailadvisor.Cocktail not found in DB");
         }
 
+        cursor.close();
         db.close();
         return result;
     }

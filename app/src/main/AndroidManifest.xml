@@ -6,19 +6,30 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Holo"
-        >
-        <activity
-            android:name=".MainActivity" >
+        android:theme="@android:style/Theme.Holo" >
+        <activity android:name=".MainActivity" >
             android:icon="@mipmap/ic_launcher"
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".SplashScreenActivity"
             android:label="@string/title_activity_splash_screen" >
+        </activity>
+        <activity
+            android:name=".SingleFragmentActivity"
+            android:label="@string/title_activity_single_fragment" >
+        </activity>
+        <activity
+            android:name=".AddActivity"
+            android:label="AddActivity" >
+        </activity>
+        <activity
+            android:name=".ViewActivity"
+            android:label="ViewActivity" >
         </activity>
     </application>
 

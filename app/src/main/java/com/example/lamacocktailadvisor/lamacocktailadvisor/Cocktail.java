@@ -19,19 +19,23 @@ public class Cocktail {
 
         //check input
         if(id < 0) {
-            Log.v(TAG, "warning in com.example.lamacocktailadvisor.lamacocktailadvisor.Cocktail declaration, given id is negative.");
+            Log.v(TAG, "warning in com.example.lamacocktailadvisor.lamacocktailadvisor.Cocktail " +
+                    "declaration, given id is negative.");
             id = -1;
         }
         if(name.isEmpty()) {
-            Log.v(TAG, "warning in com.example.lamacocktailadvisor.lamacocktailadvisor.Cocktail declaration, given name is empty.");
+            Log.v(TAG, "warning in com.example.lamacocktailadvisor.lamacocktailadvisor.Cocktail " +
+                    "declaration, given name is empty.");
             name = "";
         }
         if(averageGrade < 0) {
-            Log.v(TAG, "warning in com.example.lamacocktailadvisor.lamacocktailadvisor.Cocktail declaration, given average grade is negative.");
+            Log.v(TAG, "warning in com.example.lamacocktailadvisor.lamacocktailadvisor.Cocktail " +
+                    "declaration, given average grade is negative.");
             averageGrade = 0;
         }
         if(gradeAmount < 0) {
-            Log.v(TAG, "warning in com.example.lamacocktailadvisor.lamacocktailadvisor.Cocktail declaration, given gradeAmount is negative.");
+            Log.v(TAG, "warning in com.example.lamacocktailadvisor.lamacocktailadvisor.Cocktail " +
+                    "declaration, given gradeAmount is negative.");
             gradeAmount = 0;
         }
 
@@ -45,7 +49,8 @@ public class Cocktail {
 
     public Cocktail(String name){
         if(name.isEmpty()) {
-            Log.v(TAG, "warning in com.example.lamacocktailadvisor.lamacocktailadvisor.Cocktail declaration, given name is empty.");
+            Log.v(TAG, "warning in com.example.lamacocktailadvisor.lamacocktailadvisor.Cocktail " +
+                    "declaration, given name is empty.");
             name = "";
         }
         mName = name;

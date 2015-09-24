@@ -1,14 +1,11 @@
 package com.example.lamacocktailadvisor.lamacocktailadvisor;
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -21,7 +18,7 @@ import android.widget.Toast;
 /**
  * Created by Emilie on 14/07/2015.
  */
-public class AddFragment extends Fragment{
+public class AddFragment extends Fragment {
 
     private static final String TAG= "AddFragment";
 
@@ -117,7 +114,6 @@ public class AddFragment extends Fragment{
            });
         Log.v(TAG, " Listeners prepared done. ");
 
-        //todo check the getActivity() is the right thing to do to get the context
         mDBCocktail = CocktailDataBaseHandler.getInstance(getActivity());
         mDBLama = LamaDataBaseHandler.getInstance(getActivity());
         mDBSession = SessionDataBaseHandler.getInstance(getActivity());
@@ -171,8 +167,8 @@ public class AddFragment extends Fragment{
             mDBLama.printLamasDB();
             Toast.makeText(getActivity(), "Lama " + lamaId + " " + myLama, Toast.LENGTH_SHORT).show();
 
-            //add entry in sesson with cocktail, lama and grade + check if lama's favorite cocktail changed
-            mDBSession.addEntryInSession(1 /*sesson num*/, cocktailId, lamaId, myRating);
+            //add entry in session with cocktail, lama and grade + check if lama's favorite cocktail changed
+            mDBSession.addEntryInSession(1 /*session num*/, cocktailId, lamaId, myRating);
 
 
         }
