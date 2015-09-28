@@ -1,7 +1,7 @@
 package com.example.lamacocktailadvisor.lamacocktailadvisor;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -22,11 +22,7 @@ public class AddFragment extends Fragment {
 
     private static final String TAG= "AddFragment";
 
-    RelativeLayout mLayout = null;
-    TextView mTxtMyWelcome = null;
     EditText mEtxtMyInputCocktail = null;
-    Button mBtnAddCocktail = null;
-    Button mBtnSaveDB = null;
     Button mBtnDeleteAllDB = null;
     EditText mEtxtMyInputLama = null;
     RatingBar mRatingBarCocktail = null;
@@ -55,7 +51,7 @@ public class AddFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_add, parent, false);
 
         /*Input for cocktails*/
-        mEtxtMyInputCocktail = (EditText) v.findViewById(R.id.editTextCocktail);
+        mEtxtMyInputCocktail = (EditText) v.findViewById(R.id.list_item_cocktail_edit_text);
         mEtxtMyInputCocktail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

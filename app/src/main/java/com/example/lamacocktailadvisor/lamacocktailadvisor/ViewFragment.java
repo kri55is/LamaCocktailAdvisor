@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import java.util.List;
@@ -47,43 +48,62 @@ public class ViewFragment extends Fragment {
 
 
     private class CocktailHolder extends RecyclerView.ViewHolder{
-        public TextView mTitleTextView;
+
+        private Cocktail mCocktail;
+
+        private TextView mNameTextView;
+        private TextView mCocktailTextView;
+        private RatingBar mRating;
+        private TextView mDateTextView;
 
         public  CocktailHolder(View itemView){
             super(itemView);
 
-            mTitleTextView = (TextView) itemView;
+            mNameTextView = (TextView) itemView.findViewById(R.id.list_item_name_edit_text);
+            mCocktailTextView = (TextView) itemView.findViewById(R.id.list_item_cocktail_edit_text);
+            mRating = (RatingBar) itemView.findViewById(R.id.list_item_rating_rating_bar);
+            mDateTextView = (TextView) itemView.findViewById(R.id.list_item_date_edit_text);
+        }
+
+        void bindCocktail(Cocktail cocktail){
+            mCocktail = cocktail;
+            mNameTextView.setText("dummyName");
+            mCocktailTextView.setText(mCocktail.getName());
+            mRating.setRating(3);
+            mDateTextView.setText("today");
+
+        }
+
+    }
+    private class CocktailAdapter extends RecyclerView.Adapter<CocktailHolder>{
+        private List<Cocktail> mCocktailList;
+
+        public CocktailAdapter(List<Cocktail> cocktailList){
+            mCocktailList = cocktailList;
+        }
+
+        @Override
+        public int getItemCount(){
+            return mCocktailList.size();
+        }
+
+        @Override
+        public CocktailHolder onCreateViewHolder(ViewGroup parent, int viewType){
+                LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+            View view = layoutInflater.inflate(R.layout.list_item, parent, false);
+            return new CocktailHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(CocktailHolder holder, int position){
+            Cocktail cocktail = mCocktailList.get(position);
+            if(cocktail != null) {
+                holder.bindCocktail(cocktail);
+            }
+            else
+            {
+                Log.e(TAG, "Error cocktail null in onBindViewHolder in ViewFragment");
+            }
         }
     }
-        private class CocktailAdapter extends RecyclerView.Adapter<CocktailHolder>{
-            private List<Cocktail> mCocktailList;
-
-            public CocktailAdapter(List<Cocktail> cocktailList){
-                mCocktailList = cocktailList;
-            }
-
-            @Override
-            public int getItemCount(){
-                return mCocktailList.size();
-            }
-
-            @Override
-            public CocktailHolder onCreateViewHolder(ViewGroup parent, int viewType){
-                    LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-                View view = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-                return new CocktailHolder(view);
-            }
-
-            @Override
-            public void onBindViewHolder(CocktailHolder holder, int position){
-                Cocktail cocktail = mCocktailList.get(position);
-                if(cocktail != null) {
-                    holder.mTitleTextView.setText(cocktail.getName());
-                }
-                else
-                {
-                    Log.e(TAG, "Error cocktail null in onBindViewHolder in ViewFragment");
-                }
-            }
-        }
 }
