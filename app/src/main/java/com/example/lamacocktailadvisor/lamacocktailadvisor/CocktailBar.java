@@ -44,7 +44,8 @@ public class CocktailBar {
         int count = db.getCocktailCount();
         db.printCocktailsDB();
         //get the cocktails
-        for (int i = 0; i < count; i++){
+        //WARNING id in database starts at 1, not 0!!!
+        for (int i = 1; i <= count; i++){
             Cocktail cocktail = db.findCocktailFromId(i);
             if(cocktail != null)
             {

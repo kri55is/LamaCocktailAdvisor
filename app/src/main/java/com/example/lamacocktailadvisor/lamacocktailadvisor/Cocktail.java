@@ -126,7 +126,7 @@ public class Cocktail {
 
     public void printCocktailInfo(){
 
-        Log.v(TAG, "cocktail " + mId + " " + mName + " "
-                + mAverageGrade + " " + mGradeAmount);
+        Log.v(TAG, "cocktail id:" + mId + ", name: " + mName + ", average: "
+                + mAverageGrade + ", nb grades: " + mGradeAmount);
     }
 }

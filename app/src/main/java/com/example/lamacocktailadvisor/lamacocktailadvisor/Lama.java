@@ -55,7 +55,7 @@ public class Lama {
     }
 
     public void printLamaInfo(){
-        Log.v(TAG, "lama " + mId + " " + mName + " "
+        Log.v(TAG, "lama id :" + mId + ", name:" + mName + ", favorite cocktail id: "
                 + mFavoriteCocktail);
     }
 

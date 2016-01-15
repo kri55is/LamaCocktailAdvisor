@@ -155,7 +155,9 @@ public class LamaDataBaseHandler extends SQLiteOpenHelper{
 
     public void deleteAllLamasInDB()
     {
-        String query = "Select * FROM " + TABLE_LAMAS ;
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_LAMAS, null, null);
+        /*String query = "Select * FROM " + TABLE_LAMAS ;
         SQLiteDatabase db = getWritableDatabase();
 
         int count = 0;
@@ -172,7 +174,7 @@ public class LamaDataBaseHandler extends SQLiteOpenHelper{
         cursor.close();
         db.close();
 
-        Log.v(TAG, "deleteAllLamasInDB: " + count + " lamas deleted from database");
+        Log.v(TAG, "deleteAllLamasInDB: " + count + " lamas deleted from database");*/
     }
 
     public void printLamasDB(){
@@ -216,14 +218,13 @@ public class LamaDataBaseHandler extends SQLiteOpenHelper{
             String query = "Select * FROM " + TABLE_LAMAS + " WHERE " + COLUMN_LAMANAME + " = \"" + lamaName + "\"";
             SQLiteDatabase db = getReadableDatabase();
 
-            Lama lama = new Lama();
 
             Cursor cursor = db.rawQuery(query, null);
             int count = cursor.getCount();
 
             if (count == 1) {
                 if (cursor.moveToFirst()) {
-                    //cursor.moveToFirst();
+                    Lama lama = new Lama();
                     lama.setId(Integer.parseInt(cursor.getString(0)));
                     lama.setName(cursor.getString(1));
                     lama.setFavoriteCocktail(Integer.parseInt(cursor.getString(2)));
@@ -236,7 +237,7 @@ public class LamaDataBaseHandler extends SQLiteOpenHelper{
                 }
 
                 db.close();
-                return lama;
+                return null;
             } else {
                 if (count > 1) {
                     Log.e(TAG, "ERROR : Multiple lamas found");
@@ -246,19 +247,67 @@ public class LamaDataBaseHandler extends SQLiteOpenHelper{
                     Log.e(TAG, "ERROR : NO lama found");
                 }
             }
-            return lama;
+            return null;
         }
         catch (Throwable t){
             Log.e(TAG, "Error in LamaDataBaseHandler:findLamaFromName. ", t);
             return null;
         }
-        //TODO if count > 1 ou count =0 on renvoit un lama empty...
     }
+
+
+    public Lama findLamaFromId(int id) {
+        //WARNING id in database starts at 1, not 0!!!
+        String query = "Select * FROM " + TABLE_LAMAS + " WHERE " + COLUMN_ID + " = " + id ;
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        int totalLama = cursor.getCount();
+        if (totalLama == 1) {
+            try {
+                cursor.moveToFirst();
+
+                Lama lama = new Lama();
+
+                lama.setId(Integer.parseInt(cursor.getString(0)));
+                lama.setName(cursor.getString(1));
+                lama.setFavoriteCocktail(Integer.parseInt(cursor.getString(2)));
+
+                cursor.close();
+                db.close();
+                return lama;
+            }
+            catch (Exception e) {
+                Log.w(TAG, e);
+                cursor.close();
+                db.close();
+                return null;
+            }
+        } else {
+            if(totalLama == 0){
+                Log.v(TAG, "findLamaFromId: no lama found with id " + id);
+                return null;
+
+            }
+            else {
+                Log.v(TAG, "ERROR: several lamas found with this id.");
+
+                cursor.close();
+                db.close();
+                return null;
+            }
+        }
+    }
+
 
     public int getLamaId(String name){
         int lamaId = -1;
         Lama lama = findLamaFromName(name);
         lamaId = lama.getId();
+
+        if(lama == null) {
+            return -1;
+        }
         return lamaId;
     }
 }

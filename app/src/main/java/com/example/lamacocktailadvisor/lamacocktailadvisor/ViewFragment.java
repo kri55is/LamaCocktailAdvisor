@@ -1,5 +1,6 @@
 package com.example.lamacocktailadvisor.lamacocktailadvisor;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,7 +21,7 @@ public class ViewFragment extends Fragment {
 
     private static final String TAG= "ViewFragment";
     private RecyclerView mRecyclerView;
-    private CocktailAdapter mAdapter;
+    private SessionAdapter mAdapter;
 
 
     @Override
@@ -38,25 +39,24 @@ public class ViewFragment extends Fragment {
         }
 
     void updateUI(){
-        CocktailBar cocktailBar = CocktailBar.get(getActivity());
-        List<Cocktail> cocktails = cocktailBar.getCocktails(getActivity());
-
-        mAdapter = new CocktailAdapter(cocktails);
+        SessionBook sessionBook = SessionBook.get(getActivity());
+        List<Session> sessions = sessionBook.getSessions(getActivity());
+        mAdapter = new SessionAdapter(sessions);
         mRecyclerView.setAdapter(mAdapter);
 
     }
 
 
-    private class CocktailHolder extends RecyclerView.ViewHolder{
+    private class SessionHolder extends RecyclerView.ViewHolder{
 
-        private Cocktail mCocktail;
+        private Session mSession;
 
         private TextView mNameTextView;
         private TextView mCocktailTextView;
         private RatingBar mRating;
         private TextView mDateTextView;
 
-        public  CocktailHolder(View itemView){
+        public SessionHolder(View itemView){
             super(itemView);
 
             mNameTextView = (TextView) itemView.findViewById(R.id.list_item_name_edit_text);
@@ -65,40 +65,56 @@ public class ViewFragment extends Fragment {
             mDateTextView = (TextView) itemView.findViewById(R.id.list_item_date_edit_text);
         }
 
-        void bindCocktail(Cocktail cocktail){
-            mCocktail = cocktail;
-            mNameTextView.setText("dummyName");
-            mCocktailTextView.setText(mCocktail.getName());
-            mRating.setRating(3);
+        void bindSession(Session session){
+            mSession = session;
+            Context ctx= getContext();
+            LamaDataBaseHandler DBLama = LamaDataBaseHandler.getInstance(ctx);
+            CocktailDataBaseHandler DBCocktail = CocktailDataBaseHandler.getInstance(ctx);
+
+            Lama lama = DBLama.findLamaFromId(mSession.getLamaId());
+            String lamaName = "";
+            if(lama != null){
+                lamaName = lama.getName();
+            }
+
+            Cocktail cocktail = DBCocktail.findCocktailFromId(mSession.getCocktailId());
+            String cocktailName = "";
+            if(cocktail != null){
+                cocktailName = cocktail.getName();
+            }
+
+            mNameTextView.setText(lamaName);
+            mCocktailTextView.setText(cocktailName);
+            mRating.setRating(mSession.getGrade());
             mDateTextView.setText("today");
 
         }
 
     }
-    private class CocktailAdapter extends RecyclerView.Adapter<CocktailHolder>{
-        private List<Cocktail> mCocktailList;
+    private class SessionAdapter extends RecyclerView.Adapter<SessionHolder>{
+        private List<Session> mSessionList;
 
-        public CocktailAdapter(List<Cocktail> cocktailList){
-            mCocktailList = cocktailList;
+        public SessionAdapter(List<Session> sessionList){
+            mSessionList = sessionList;
         }
 
         @Override
         public int getItemCount(){
-            return mCocktailList.size();
+            return mSessionList.size();
         }
 
         @Override
-        public CocktailHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        public SessionHolder onCreateViewHolder(ViewGroup parent, int viewType){
                 LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
             View view = layoutInflater.inflate(R.layout.list_item, parent, false);
-            return new CocktailHolder(view);
+            return new SessionHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(CocktailHolder holder, int position){
-            Cocktail cocktail = mCocktailList.get(position);
-            if(cocktail != null) {
-                holder.bindCocktail(cocktail);
+        public void onBindViewHolder(SessionHolder holder, int position){
+            Session session = mSessionList.get(position);
+            if(session != null) {
+                holder.bindSession(session);
             }
             else
             {

@@ -25,7 +25,7 @@ public class CocktailDataBaseHandler extends SQLiteOpenHelper{
 
     private static final String TAG = "Cocktail";
 
-    private static final int COCKTAIL_DATABASE_VERSION = 1;
+    private static final int COCKTAIL_DATABASE_VERSION = 2;
 
     //VERSION 1
     private static final String DATABASE_COCKTAIL_NAME = "cocktailDB.sqlite";
@@ -47,7 +47,7 @@ public class CocktailDataBaseHandler extends SQLiteOpenHelper{
     public void onCreate(SQLiteDatabase db){
         String CREATE_COCKTAILS_TABLE = "CREATE TABLE " +
                 TABLE_COCKTAILS + "("
-                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_ID + " INTEGER PRIMARY KEY,"
                 + COLUMN_COCKTAILNAME + " TEXT,"
                 + COLUMN_AVERAGEGRADE + " REAL,"
                 + COLUMN_GRADESAMOUNT + " INTEGER"+ ")";
@@ -114,8 +114,8 @@ public class CocktailDataBaseHandler extends SQLiteOpenHelper{
 
     public int addCocktailInDB (Cocktail cocktail)
     {
-        SQLiteDatabase db = getWritableDatabase();
         int id;
+        SQLiteDatabase db = getWritableDatabase();
 
         String name= cocktail.getName();
 
@@ -147,14 +147,12 @@ public class CocktailDataBaseHandler extends SQLiteOpenHelper{
 
     public Cocktail findCocktailFromId(int id) {
         //WARNING id in database starts at 1, not 0!!!
-        int dataBaseId = id+1;
-        String query = "Select * FROM " + TABLE_COCKTAILS + " WHERE " + COLUMN_ID + " = " + dataBaseId ;
+        String query = "Select * FROM " + TABLE_COCKTAILS + " WHERE " + COLUMN_ID + " = " + id ;
 
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         int totalCocktail = cursor.getCount();
         if (totalCocktail == 1) {
-            Log.v(TAG, "printCocktailsDB: No cocktail to find");
             try {
                 cursor.moveToFirst();
 
@@ -175,12 +173,19 @@ public class CocktailDataBaseHandler extends SQLiteOpenHelper{
                 db.close();
                 return null;
             }
-        } else {
-            Log.v(TAG, "ERROR: several cocktails found with this id.");
+        } else
+        {
+            if (totalCocktail == 0){
+                Log.v(TAG, "findCocktailFromId: No cocktail to find");
+                return null;
+            }
+            else {
+                Log.v(TAG, "ERROR: several cocktails found with id " + id);
 
-            cursor.close();
-            db.close();
-            return null;
+                cursor.close();
+                db.close();
+                return null;
+            }
         }
     }
 

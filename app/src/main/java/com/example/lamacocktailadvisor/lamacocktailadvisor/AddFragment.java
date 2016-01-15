@@ -24,6 +24,7 @@ public class AddFragment extends Fragment {
 
     EditText mEtxtMyInputCocktail = null;
     Button mBtnDeleteAllDB = null;
+    Button mBtnPrintAllDB = null;
     EditText mEtxtMyInputLama = null;
     RatingBar mRatingBarCocktail = null;
     Button mBtnEnter = null;
@@ -96,21 +97,30 @@ public class AddFragment extends Fragment {
         //Button Enter
         mBtnEnter = (Button) v.findViewById(R.id.enter);
         mBtnEnter.setOnClickListener(new View.OnClickListener() {
-             public void onClick(View v) {
-                 EnterInputs();
-             }
-         });
+            public void onClick(View v) {
+                EnterInputs();
+            }
+        });
 
         //Button deleteAllDB
         mBtnDeleteAllDB = (Button) v.findViewById(R.id.deleteAll);
-        mBtnDeleteAllDB.setOnClickListener(new View.OnClickListener(){
-               public void onClick(View v) {
-                   DeleteAll();
-               }
-           });
+        mBtnDeleteAllDB.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                DeleteAll();
+            }
+        });
         Log.v(TAG, " Listeners prepared done. ");
 
-        mDBCocktail = CocktailDataBaseHandler.getInstance(getActivity());
+        //Button printCocktails
+        mBtnPrintAllDB = (Button) v.findViewById(R.id.printCocktails);
+        mBtnPrintAllDB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PrintAllCocktails();
+            }
+        });
+
+                mDBCocktail = CocktailDataBaseHandler.getInstance(getActivity());
         mDBLama = LamaDataBaseHandler.getInstance(getActivity());
         mDBSession = SessionDataBaseHandler.getInstance(getActivity());
 
@@ -170,17 +180,25 @@ public class AddFragment extends Fragment {
         }
     }
 
-    public void DeleteAll(){
-        Log.v(TAG, " Button Delete All pushed. ");
+    private void DeleteAll(){
+        Log.v(TAG, " Button Delete All clicked. ");
 
         mDBCocktail.deleteAllCocktailsInDB();
         mDBLama.deleteAllLamasInDB();
+        mDBSession.deleteAllEntryInSessionsInDB();
 
         mDBCocktail.printCocktailsDB();
         mDBLama.printLamasDB();
 
         Toast.makeText(getActivity(), "Deleted All entries", Toast.LENGTH_LONG).show();
 
+    }
+
+    private void PrintAllCocktails(){
+        Log.v(TAG, " Button Print Cocktails clicked. ");
+
+        mDBCocktail.printCocktailsDB();
+        mDBLama.printLamasDB();
     }
 
     private void resetInput(){

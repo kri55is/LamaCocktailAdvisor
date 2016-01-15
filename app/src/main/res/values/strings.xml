@@ -7,6 +7,8 @@
 
     <string name="saveButton">Save</string>
     <string name="deleteAllDBButton">Delete all</string>
+    <string name="printCocktails">Print Cocktails</string>
+
     <string name="AddCocktailButton">Add Cocktail</string>
     <string name="AddedCocktailFeedback">You added </string>
 

@@ -24,7 +24,7 @@ public class SessionDataBaseHandler extends SQLiteOpenHelper{
 
     //VERSION 1
     private static final String DATABASE_SESSION_NAME = "sessionDB.sqlite";
-    private static final int 	SESSION_DATABASE_VERSION = 1;
+    private static final int 	SESSION_DATABASE_VERSION = 2;
 
     public static final String TABLE_SESSIONS = "sessions";
 
@@ -64,6 +64,17 @@ public class SessionDataBaseHandler extends SQLiteOpenHelper{
         Log.v(TAG, "onUpgrade: com.example.lamacocktailadvisor.lamacocktailadvisor.Session Database has been upgraded");
     }
 
+    public int getSessionCount(){
+
+        String query = "Select * FROM " + TABLE_SESSIONS;
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(query, null);
+        int count = cursor.getCount();
+
+        return count;
+
+    }
 
     public void addEntryInSession (int sessionNum, int cocktailId, int lamaId, float rating ){
 
@@ -91,6 +102,58 @@ public class SessionDataBaseHandler extends SQLiteOpenHelper{
         }
     }
 
+
+    public Session findSessionFromId(Context context, int id) {
+        //WARNING id in database starts at 1, not 0!!!
+        String query = "Select * FROM " + TABLE_SESSIONS + " WHERE " + COLUMN_ID + " = " + id ;
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        int totalSession = cursor.getCount();
+        if (totalSession == 1) {
+
+            try {
+                cursor.moveToFirst();
+
+                Session session = new Session();
+
+                session.setId(Integer.parseInt(cursor.getString(0)));
+                session.setSessionNumber(Integer.parseInt(cursor.getString(1)));
+
+                CocktailDataBaseHandler cocktailDB = CocktailDataBaseHandler.getInstance(context);
+                int cocktailId = Integer.parseInt(cursor.getString(2));
+                LamaDataBaseHandler lamaDB = LamaDataBaseHandler.getInstance(context);
+                int lamaId = Integer.parseInt(cursor.getString(3));
+
+                session.setCocktailId(cocktailId);
+                session.setLamaId(lamaId);
+
+                session.setGrade(Integer.parseInt(cursor.getString(4)));
+
+                cursor.close();
+                db.close();
+                return session;
+            }
+            catch (Exception e) {
+                Log.w(TAG, e);
+                cursor.close();
+                db.close();
+                return null;
+            }
+        } else {
+            if (totalSession == 0){
+                Log.v(TAG, "findSessionFromId: no session found with id " + id);
+                return null;
+            }
+            else {
+                Log.v(TAG, "ERROR: several sessions found with this id.");
+
+                cursor.close();
+                db.close();
+                return null;
+            }
+        }
+    }
 
     public void deleteAllEntryInSessionsInDB()
     {
@@ -133,8 +196,8 @@ public class SessionDataBaseHandler extends SQLiteOpenHelper{
 
                     session.setId(Integer.parseInt(cursor.getString(1)));
                     session.setSessionNumber(Integer.parseInt(cursor.getString(1)));
-                    session.setCocktail(Integer.parseInt(cursor.getString(2)));
-                    session.setLama(Integer.parseInt(cursor.getString(3)));
+                    session.setCocktailId(Integer.parseInt(cursor.getString(2)));
+                    session.setLamaId(Integer.parseInt(cursor.getString(3)));
                     session.setGrade(Integer.parseInt(cursor.getString(4)));
 
                     session.printSessionInfo();

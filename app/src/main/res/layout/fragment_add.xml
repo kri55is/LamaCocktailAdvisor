@@ -63,4 +63,13 @@
         android:layout_marginBottom="48dp"
         android:text="@string/deleteAllDBButton" />
 
+    <Button
+        android:id="@+id/printCocktails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/printCocktails"
+        android:layout_alignTop="@+id/deleteAll"
+        android:layout_alignRight="@+id/ratingBar1"
+        android:layout_alignEnd="@+id/ratingBar1" />
+
 </RelativeLayout>

@@ -6,20 +6,26 @@ import android.util.Log;
 
 public class Session {
 
-    public int mId;
-    public int mSessionNumber;
-    public int mCocktail;
-    public int mLama;
-    public float mGrade;
+    private int mId;
+    private int mSessionNumber;
+    private int mCocktailId;
+    private int mLamaId;
+    private float mGrade;
 
     private static final String TAG = "Session";
 
-    public Session(){}
-    public Session(int id, int sessionNumber,  int cocktail, int lama, int grade){
+    public Session(){
+        this.mId = -1;
+        this.mSessionNumber = -1;
+        this.mCocktailId = -1;
+        this.mLamaId = -1;
+        this.mGrade = -1;
+    }
+    public Session(int id, int sessionNumber,  int cocktailId, int lamaId, int grade){
         this.mId = id;
         this.mSessionNumber = sessionNumber;
-        this.mCocktail = cocktail;
-        this.mLama = lama;
+        this.mCocktailId = cocktailId;
+        this.mLamaId = lamaId;
         this.mGrade = grade;
     }
 
@@ -44,20 +50,20 @@ public class Session {
         this.mSessionNumber = mSessionNumber;
     }
 
-    public int getCocktail() {
-        return mCocktail;
+    public int getCocktailId() {
+        return mCocktailId;
     }
 
-    public void setCocktail(int mCocktail) {
-        this.mCocktail = mCocktail;
+    public void setCocktailId(int mCocktailId) {
+        this.mCocktailId = mCocktailId;
     }
 
-    public int getLama() {
-        return mLama;
+    public int getLamaId() {
+        return mLamaId;
     }
 
-    public void setLama(int mLama) {
-        this.mLama = mLama;
+    public void setLamaId(int mLamaId) {
+        this.mLamaId = mLamaId;
     }
 
     public float getGrade() {
@@ -69,8 +75,8 @@ public class Session {
     }
 
     public void printSessionInfo(){
-        Log.v(TAG, "session " + mId + " " + mSessionNumber + " "
-                + mCocktail + " " + mLama + " " + mGrade);
+        Log.v(TAG, "session id:" + mId + ", session nb: " + mSessionNumber + ", cocktailId: "
+                + mCocktailId + ", lamaId: " + mLamaId + ", grade: " + mGrade);
     }
 
 }
